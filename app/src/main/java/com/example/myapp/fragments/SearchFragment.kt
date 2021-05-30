@@ -1,10 +1,6 @@
 package com.example.myapp.fragments
 
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,7 +22,9 @@ import com.example.myapp.data.Intention
 import com.example.myapp.data.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.squareup.picasso.Picasso
+import java.text.DecimalFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -282,6 +279,7 @@ class SearchFragment : Fragment() {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             mEvent?.clear()
                             if (dataSnapshot.hasChildren()) {
+                                var posts: MutableList<Event> = mutableListOf()
                                 for (snapshot in dataSnapshot.children) {
                                     var eventShowedUid: String = snapshot.key.toString();
                                     val event = Event(
@@ -333,9 +331,18 @@ class SearchFragment : Fragment() {
                                     }
                                     event.imgoingtos = imgoingtos
                                     if (event != null) {
-                                        mEvent?.add(event)
+                                        posts?.add(event)
+                                        //mEvent?.add(event)
                                     }
                                 }
+                                /*posts.sortedWith(
+                                    compareBy { it.startDate!!.split('/')[0].toInt() }
+                                )*/
+                                // Sorted by starDate
+                                mEvent!!.addAll(posts.sortedBy {
+                                    it.startDate!!.split('/')[2].toInt()+it.startDate!!.split('/')[1].toInt() * 100+it.startDate!!.split('/')[0].toInt()
+                                }.reversed())
+                                //mEvent!!.addAll(posts.sortedBy { myObject -> myObject.startDate!!.split('/')[0].toInt() })
                                 eventAdapter?.notifyDataSetChanged()
                             }
                         }

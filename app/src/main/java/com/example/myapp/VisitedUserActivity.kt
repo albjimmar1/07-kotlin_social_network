@@ -118,6 +118,7 @@ class VisitedUserActivity : AppCompatActivity() {
                             numberVisits.text =
                                 dataSnapshot.child("visits").childrenCount.toString()
 
+                        var posts: MutableList<Event> = mutableListOf()
                         for (snapshot2 in dataSnapshot.child("posts").children) {
                             var postVisitedUid: String = snapshot2.key.toString()
                             val event = Event(
@@ -171,10 +172,16 @@ class VisitedUserActivity : AppCompatActivity() {
                             numberWeGo.text = (event.imgoingtos!!.size + numberWeGo.text.toString()
                                 .toInt()).toString()
                             if (event != null) {
-                                mEvent?.add(event)
+                                posts?.add(event)
+                                //mEvent?.add(event)
                             }
-                            eventAdapter?.notifyDataSetChanged()
+                            //eventAdapter?.notifyDataSetChanged()
                         }
+                        // Sorted by starDate
+                        mEvent!!.addAll(posts.sortedBy {
+                            it.startDate!!.split('/')[2].toInt()+it.startDate!!.split('/')[1].toInt() * 100+it.startDate!!.split('/')[0].toInt()
+                        }.reversed())
+                        eventAdapter?.notifyDataSetChanged()
 
                         reference.child("users").child(auth.currentUser!!.uid).child("following")
                             .child(userVisitedUid)

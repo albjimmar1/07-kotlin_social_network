@@ -84,7 +84,7 @@ class ProfileFragment : Fragment() {
         recyclerView = view.findViewById(R.id.profileRecyclerView)
         recyclerView?.setHasFixedSize(true)
         val gridLayoutManager = GridLayoutManager(context, 3, GridLayout.VERTICAL, false)
-        gridLayoutManager.reverseLayout = true
+        //gridLayoutManager.reverseLayout = true
         recyclerView?.layoutManager = gridLayoutManager
         mEvent = ArrayList()
         eventAdapter = context?.let {
@@ -171,10 +171,15 @@ class ProfileFragment : Fragment() {
                                 .toInt()).toString()
                             if (event != null) {
                                 posts?.add(event)
-                                mEvent?.add(event)
+                                //mEvent?.add(event)
                             }
-                            eventAdapter?.notifyDataSetChanged()
+                            //eventAdapter?.notifyDataSetChanged()
                         }
+                        // Sorted by starDate
+                        mEvent!!.addAll(posts.sortedBy {
+                            it.startDate!!.split('/')[2].toInt()+it.startDate!!.split('/')[1].toInt() * 100+it.startDate!!.split('/')[0].toInt()
+                        }.reversed())
+                        eventAdapter?.notifyDataSetChanged()
                     }
                 }
 

@@ -102,6 +102,7 @@ class InboxFragment : Fragment() {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     mNotification?.clear()
                     if (dataSnapshot.hasChildren()) {
+                        var notifications: MutableList<Notification> = mutableListOf()
                         userUid = dataSnapshot.key.toString()
                         user = User(
                             dataSnapshot.child("fullName").value.toString(),
@@ -135,8 +136,9 @@ class InboxFragment : Fragment() {
                                 )
                                 notification.userId = follow.autor
                                 if (notification != null) {
-                                    mNotification?.add(notification)
-                                    notificationAdapter?.notifyDataSetChanged()
+                                    notifications?.add(notification)
+                                    //mNotification?.add(notification)
+                                    //notificationAdapter?.notifyDataSetChanged()
                                 }
                             }
                         }
@@ -187,8 +189,9 @@ class InboxFragment : Fragment() {
                                     notification.eventId = event.eventUid
                                     notification.imageEvent = event.imageUrl
                                     if (notification != null) {
-                                        mNotification?.add(notification)
-                                        notificationAdapter?.notifyDataSetChanged()
+                                        notifications?.add(notification)
+                                        //mNotification?.add(notification)
+                                        //notificationAdapter?.notifyDataSetChanged()
                                     }
                                 }
                             }
@@ -215,13 +218,19 @@ class InboxFragment : Fragment() {
                                     notification.eventId = event.eventUid
                                     notification.imageEvent = event.imageUrl
                                     if (notification != null) {
-                                        mNotification?.add(notification)
-                                        notificationAdapter?.notifyDataSetChanged()
+                                        notifications?.add(notification)
+                                        //mNotification?.add(notification)
+                                        //notificationAdapter?.notifyDataSetChanged()
                                     }
                                 }
                             }
                             event.imgoingtos = imgoingtos
                         }
+                        // Sorted by date
+                        mNotification?.addAll(notifications.sortedBy {
+                            it.date!!.split('/')[2].toInt()+it.date!!.split('/')[1].toInt() * 100+it.date!!.split('/')[0].toInt()
+                        })
+                        notificationAdapter?.notifyDataSetChanged()
                     }
                 }
 
